@@ -1,0 +1,2 @@
+led1202_reg.c:36:9:LED1202_ReadReg	1
+led1202_reg.c:54:9:LED1202_WriteReg	1

@@ -1,0 +1,16 @@
+led12a1.c:86:9:LED12A1_Init	1
+led12a1.c:109:10:BSP_I2C_Init	1
+led12a1.c:119:9:BSP_I2C_DeInit	1
+led12a1.c:133:9:BSP_I2C_Write	2
+led12a1.c:153:9:BSP_I2C_Read	2
+led12a1.c:175:9:ReadRegWrap	1
+led12a1.c:191:9:WriteRegWrap	1
+led12a1.c:205:6:LED12A1_GPIO_Init	1
+led12a1.c:226:9:LED12A1_DeviceEnable	6
+led12a1.c:274:9:LED12A1_SetDeviceAddr	6
+led12a1.c:320:9:LED12A1_DeviceDisable	6
+led12a1.c:366:9:LED12A1_ScanAvailDevice	3
+led12a1.c:400:9:LED12A1_AnalogDimming	1
+led12a1.c:417:9:LED12A1_DigitalDimming	1
+led12a1.c:432:9:LED12A1_ChannelEnable	1
+led12a1.c:448:9:LED12A1_ChannelDisable	1
