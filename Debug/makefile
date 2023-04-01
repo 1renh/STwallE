@@ -77,8 +77,8 @@ all: main-build
 main-build: HackKosice.elf secondary-outputs
 
 # Tool invocations
-HackKosice.elf HackKosice.map: $(OBJS) $(USER_OBJS) C:\Users\irene\STM32CubeIDE\workspace_1.12.0\HackKosice\STM32G0B1RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
-	arm-none-eabi-g++ -o "HackKosice.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"C:\Users\irene\STM32CubeIDE\workspace_1.12.0\HackKosice\STM32G0B1RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="HackKosice.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
+HackKosice.elf HackKosice.map: $(OBJS) $(USER_OBJS) /Users/ayshahchan/Desktop/projects/stwalle/STM32G0B1RETX_FLASH.ld makefile objects.list $(OPTIONAL_TOOL_DEPS)
+	arm-none-eabi-g++ -o "HackKosice.elf" @"objects.list" $(USER_OBJS) $(LIBS) -mcpu=cortex-m0plus -T"/Users/ayshahchan/Desktop/projects/stwalle/STM32G0B1RETX_FLASH.ld" --specs=nosys.specs -Wl,-Map="HackKosice.map" -Wl,--gc-sections -static --specs=nano.specs -mfloat-abi=soft -mthumb -Wl,--start-group -lc -lm -lstdc++ -lsupc++ -Wl,--end-group
 	@echo 'Finished building target: $@'
 	@echo ' '
 

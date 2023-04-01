@@ -25,7 +25,7 @@
 #include "led12a1.h"
 #include <stdbool.h>
 #include "led1202.h"
-#include <bridge.h>
+//#include <bridge.h>
 
 /* USER CODE END Includes */
 
@@ -74,6 +74,19 @@ static void MX_USART2_UART_Init(void);
 
 /* USER CODE END 0 */
 
+void setrgb(int x,int y, int r, int g, int b){
+	if (r>0){
+	LED12A1_ChannelEnable( &LED1202Obj , (TypeDefChannel)(LED_CHANNEL_0<<(3*x) ),  (TypedefEnumDevAddr)(LED_DEVICE1+y));
+	LED12A1_AnalogDimming( &LED1202Obj , r,3*x,  (TypedefEnumDevAddr)(LED_DEVICE1+y));}
+	if (g>0){
+	LED12A1_ChannelEnable( &LED1202Obj , (TypeDefChannel)(LED_CHANNEL_0<<(3*x+1) ),  (TypedefEnumDevAddr)(LED_DEVICE1+y));
+	LED12A1_AnalogDimming( &LED1202Obj , g, 3*x+1,  (TypedefEnumDevAddr)(LED_DEVICE1+y));}
+	if (b>0){
+	LED12A1_ChannelEnable( &LED1202Obj , (TypeDefChannel)(LED_CHANNEL_0<<(3*x+2) ),  (TypedefEnumDevAddr)(LED_DEVICE1+y));
+	LED12A1_AnalogDimming( &LED1202Obj , b, 3*x+2,  (TypedefEnumDevAddr)(LED_DEVICE1+y));}
+
+}
+
 /**
   * @brief  The application entry point.
   * @retval int
@@ -119,35 +132,23 @@ int main(void)
       LED12A1_DeviceEnable(&LED1202Obj , (TypedefEnumDevAddr)(LED_DEVICE1 + dev));
       LED12A1_ChannelDisable( &LED1202Obj , LED_CHANNEL_ALL , (TypedefEnumDevAddr)( LED_DEVICE1 + dev));
     }
-  /* USER CODE END 2 */
-    int dev = 0;
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  while (1)
-  {
-	  // WaitForCommand();
 
-    /* USER CODE END WHILE */
-	    for (dev = 0;dev<NumOfDev;dev++)
-	    {
-	      LED12A1_ChannelDisable( &LED1202Obj , LED_CHANNEL_ALL , (TypedefEnumDevAddr)( LED_DEVICE1 + dev));
-	    }
-	    HAL_Delay(300);
+    setrgb(2,1,10,1,1);
 
-	    for (dev = 0;dev<NumOfDev;dev++)
-	    {
-	      for (uint8_t channel = 0;channel<=11;channel++)
-	      {
-	        LED12A1_ChannelEnable( &LED1202Obj , (TypeDefChannel)(LED_CHANNEL_0<<channel ),  (TypedefEnumDevAddr)(LED_DEVICE1+dev));
-	        LED12A1_AnalogDimming( &LED1202Obj , MAX_CH_CURRENT / 500, channel,  (TypedefEnumDevAddr)(LED_DEVICE1+dev));
-		    HAL_Delay(300);
-	      }
-	    }
-	    HAL_Delay(500);
+//  /* USER CODE END 2 */
+//    int dev = 0;
+//  /* Infinite loop */
+//  /* USER CODE BEGIN WHILE */
+//    int channels[] = {0,3,6,9};
+//    for(int x =0;x<sizeof(channels)/sizeof(int);x++){
+//
+//	LED12A1_ChannelEnable( &LED1202Obj , (TypeDefChannel)(LED_CHANNEL_0<<channels[x] ),  (TypedefEnumDevAddr)(LED_DEVICE1+dev));
+//	LED12A1_AnalogDimming( &LED1202Obj , MAX_CH_CURRENT / 500, channels[x],  (TypedefEnumDevAddr)(LED_DEVICE1+dev));
+//    }
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
-}
+
 
 /**
   * @brief System Clock Configuration
