@@ -25,6 +25,8 @@
 #include "led12a1.h"
 #include <stdbool.h>
 #include "led1202.h"
+#include <bridge.h>
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -123,21 +125,25 @@ int main(void)
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+	  // WaitForCommand();
+
     /* USER CODE END WHILE */
 	    for (dev = 0;dev<NumOfDev;dev++)
 	    {
 	      LED12A1_ChannelDisable( &LED1202Obj , LED_CHANNEL_ALL , (TypedefEnumDevAddr)( LED_DEVICE1 + dev));
 	    }
 	    HAL_Delay(300);
+
 	    for (dev = 0;dev<NumOfDev;dev++)
 	    {
 	      for (uint8_t channel = 0;channel<=11;channel++)
 	      {
-	        LED12A1_ChannelEnable( &LED1202Obj , (TypeDefChannel)(LED_CHANNEL_0<<channel),  (TypedefEnumDevAddr)(LED_DEVICE1+dev));
-	        LED12A1_AnalogDimming( &LED1202Obj , MAX_CH_CURRENT, channel,  (TypedefEnumDevAddr)(LED_DEVICE1+dev));
+	        LED12A1_ChannelEnable( &LED1202Obj , (TypeDefChannel)(LED_CHANNEL_0<<channel ),  (TypedefEnumDevAddr)(LED_DEVICE1+dev));
+	        LED12A1_AnalogDimming( &LED1202Obj , MAX_CH_CURRENT / 500, channel,  (TypedefEnumDevAddr)(LED_DEVICE1+dev));
+		    HAL_Delay(300);
 	      }
 	    }
-	    HAL_Delay(300);
+	    HAL_Delay(500);
     /* USER CODE BEGIN 3 */
   }
   /* USER CODE END 3 */
