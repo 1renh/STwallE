@@ -203,7 +203,7 @@ void bsh() {
 
 		// prints 's'
 		for (int k = 0; k <= 31; k += 2) {
-			if (i > 14) {
+			if (i > 14 || i < 5) {
 				j -= 31;
 				break;
 			}
@@ -218,6 +218,10 @@ void bsh() {
 
 		// prints 'h'
 		for (int k = 0; k <= 31; k += 2) {
+			if (i < 11) {
+				j -= 31;
+				break;
+			}
 			setrgb_line(-15 + i, j + k, 	 1, 0, 0, 0);
 			setrgb_line(-14 + i, j + k + 5, 1, 1, 1, 1);
 			setrgb_line(-13 + i, j + k + 10, 1, 0, 0, 1);
@@ -281,8 +285,8 @@ int main(void) {
 //  /* Infinite loop */
 //  /* USER CODE BEGIN WHILE */
 	while (1) {
-		// transition();
-		bsh();
+		transition();
+		// bsh();
 	}
 	/* USER CODE BEGIN 3 */
 }
