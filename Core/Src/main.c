@@ -74,22 +74,23 @@ static void MX_USART2_UART_Init(void);
 
 /* USER CODE END 0 */
 
+// sets rgb value of LED on position x y (0 ,0 is top right)
 void setrgb(int x, int y, int r, int g, int b) {
-	if (r > 0) {
+	if (r >= 0) {
 		LED12A1_ChannelEnable(&LED1202Obj,
 				(TypeDefChannel) (LED_CHANNEL_0 << (3 * x)),
 				(TypedefEnumDevAddr) (LED_DEVICE1 + y));
 		LED12A1_AnalogDimming(&LED1202Obj, r, 3 * x,
 				(TypedefEnumDevAddr) (LED_DEVICE1 + y));
 	}
-	if (g > 0) {
+	if (g >= 0) {
 		LED12A1_ChannelEnable(&LED1202Obj,
 				(TypeDefChannel) (LED_CHANNEL_0 << (3 * x + 1)),
 				(TypedefEnumDevAddr) (LED_DEVICE1 + y));
 		LED12A1_AnalogDimming(&LED1202Obj, g, 3 * x + 1,
 				(TypedefEnumDevAddr) (LED_DEVICE1 + y));
 	}
-	if (b > 0) {
+	if (b >= 0) {
 		LED12A1_ChannelEnable(&LED1202Obj,
 				(TypeDefChannel) (LED_CHANNEL_0 << (3 * x + 2)),
 				(TypedefEnumDevAddr) (LED_DEVICE1 + y));
@@ -98,6 +99,27 @@ void setrgb(int x, int y, int r, int g, int b) {
 	}
 }
 
+// continuously converts rgb values in 63 bit value
+void smoothrgb(int x, int y, int rgb) {
+	int div = rgb / 63;
+	if (div % 2 == 0) {
+		rgb = rgb % 62;
+	} else {
+		rgb = 62 - (rgb % 62);
+	}
+
+	if (rgb <= 20) {
+		setrgb(x, y, rgb, 20 - rgb, 0);
+	} else if (rgb <= 40) {
+		rgb -= 20;
+		setrgb(x, y, 20 - rgb, 0, rgb);
+	} else {
+		rgb -= 40;
+		setrgb(x, y, 0, rgb, 20 - rgb);
+	}
+}
+
+// sets every LED to a specific rgb value
 void setrgb_all(int r, int g, int b) {
 	for (int x = 0; x < 4; x++) {
 		for (int y = 0; y < 4; y++) {
@@ -126,18 +148,87 @@ void setrgb_all(int r, int g, int b) {
 	}
 }
 
+// sets every LED in a row to a specific rgb value
+void setrgb_line(int y, int rgb, int x0, int x1, int x2, int x3) {
+	if (y < 0 || y > 3) {
+		return;
+	}
+
+	if (x3) {
+		smoothrgb(0, y, rgb);
+	}
+	if (x2) {
+		smoothrgb(1, y, rgb);
+	}
+	if (x1) {
+		smoothrgb(2, y, rgb);
+	}
+	if (x0) {
+		smoothrgb(3, y, rgb);
+	}
+}
+
+// task 1: smooth transition
 void transition() {
 	for (int i = 0; i <= 20; i++) {
 		setrgb_all(i, 20 - i, 0);
-		HAL_Delay(50);
+		HAL_Delay(45);
 	}
 	for (int i = 0; i <= 20; i++) {
 		setrgb_all(20 - i, 0, i);
-		HAL_Delay(50);
+		HAL_Delay(45);
 	}
 	for (int i = 0; i <= 20; i++) {
 		setrgb_all(0, i, 20 - i);
-		HAL_Delay(50);
+		HAL_Delay(45);
+	}
+}
+
+// display bsh on LEDs while using smooth light transition
+void bsh() {
+	int j = 0;
+	for (int i = 0; i < 19; i++) {
+		// prints 'b'
+		for (int k = 0; k <= 31; k += 2) {
+			if (i > 8) {
+				j -= 31;
+				break;
+			}
+			setrgb_line(-4 + i, j + k, 		1, 0, 0, 0);
+			setrgb_line(-3 + i, j + k + 5, 1, 1, 1, 1);
+			setrgb_line(-2 + i, j + k + 10, 1, 0, 0, 1);
+			setrgb_line(-1 + i, j + k + 15, 1, 1, 1, 1);
+			HAL_Delay(5);
+		}
+		j += 31;
+
+		// prints 's'
+		for (int k = 0; k <= 31; k += 2) {
+			if (i > 14) {
+				j -= 31;
+				break;
+			}
+			setrgb_line(-10 + i, j + k, 	1, 1, 1, 1);
+			setrgb_line(-9 + i, j + k + 5,  1, 0, 0, 0);
+			setrgb_line(-8 + i, j + k + 10, 1, 1, 1, 1);
+			setrgb_line(-7 + i, j + k + 15, 0, 0, 0, 1);
+			setrgb_line(-6 + i, j + k + 20, 1, 1, 1, 1);
+			HAL_Delay(5);
+		}
+		j += 31;
+
+		// prints 'h'
+		for (int k = 0; k <= 31; k += 2) {
+			setrgb_line(-15 + i, j + k, 	 1, 0, 0, 0);
+			setrgb_line(-14 + i, j + k + 5, 1, 1, 1, 1);
+			setrgb_line(-13 + i, j + k + 10, 1, 0, 0, 1);
+			setrgb_line(-12 + i, j + k + 15, 1, 0, 0, 1);
+			HAL_Delay(5);
+		}
+		j += 31;
+
+		LED12A1_ChannelDisable(&LED1202Obj, LED_CHANNEL_ALL,
+				(TypedefEnumDevAddr) (LED_DEVICE_ALL));
 	}
 }
 
@@ -191,8 +282,8 @@ int main(void) {
 //  /* Infinite loop */
 //  /* USER CODE BEGIN WHILE */
 	while (1) {
-		transition();
-		HAL_Delay(500);
+		// transition();
+		bsh();
 	}
 	/* USER CODE BEGIN 3 */
 }
